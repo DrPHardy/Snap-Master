@@ -1,0 +1,10 @@
+{
+    entry = {
+	bundle = SnapMasterSettings;
+	cell = PSLinkCell;
+	detail = SnapMasterSettingsListController;
+	icon = SnapMasterSettings.png;
+	isController = 1;
+	label = "Snap Master";
+    };
+}

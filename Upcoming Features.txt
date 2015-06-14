@@ -1,0 +1,30 @@
+WORKING ON:
+
+	- Megasnap
+
+UPCOMING:
+
+	- Stealth mode (see stories without sending "seen" stamp)
+
+	- Selective loading (only load stories/snaps you selected. Helps saving data on 3G, cause sometimes I just wanna some a few snaps but it loads all of them)
+
+	- Save videos to "Snapchat" album
+
+	- Manually Mark Viewed
+
+	- Nightmode
+
+	- Extend Snap Timer
+
+	- Picture Resolution Problem
+
+	- View Without Marking Read
+
+	- Fix sideways videos
+
+	- Save All Chats
+
+
+IN THE FUTURE:
+
+	- Snap Master for Android
