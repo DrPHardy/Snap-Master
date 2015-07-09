@@ -1,13 +1,14 @@
+#include "Headers.h"
+
+
 #define kBundlePath @"/Library/MobileSubstrate/DynamicLibraries/com.drp.snapmaster.bundle"
 NSBundle *bundle = [[[NSBundle alloc] initWithPath:kBundlePath] autorelease];
 
 
 NSDictionary *prefs = nil;
 
-inline BOOL GetPrefBool(NSString *key)
-{
-	@try
-	{
+inline BOOL GetPrefBool(NSString *key) {
+	@try {
 
 		if([[prefs valueForKey:@"isEnabled"] boolValue]) return [[prefs valueForKey:key] boolValue];
 
@@ -16,72 +17,39 @@ inline BOOL GetPrefBool(NSString *key)
 	}@catch(NSException *) {}
 
 	return NO;
-
 }
 
 
-
 id currentSnap = nil;
-
 int currentSnapSource = 0;
-
 BOOL allowTimer = NO;
-
 BOOL snapShowing = NO;
-
 BOOL snapShowingIsStory = NO;
-
 id PVC = nil;
-
 BOOL isFromLibrary = NO;
-
 NSMutableDictionary *viewControllers = [NSMutableDictionary dictionary];
-
 BOOL firstLoad = YES;
-
 BOOL isMegaSnapRunning = NO;
 
 
-@interface Manager
+%hook SCGCDTimer
 
-+(id) shared;
+	+(id) scheduleTimerWithInterval:(double)arg1 target:(id)target selector:(SEL)selector dispatchQueue:(id)arg4
+	{
+		NSLog(@"Target: %@\nSelector: %@", NSStringFromClass([target class]), NSStringFromSelector(selector));
 
--(void) startTimer:(id)snap source:(int)source;
+		return %orig;
+	}
 
--(void) markSnapAsViewed:(id)snap;
-
-@end
-
-
-
-@interface Snap
-
--(void) setCanBeReplayed:(BOOL)canBeReplayed;
-
--(void) setReplayed:(BOOL)wasReplayed;
-
--(void) markAsViewed;
-
-@end
-
-
-
-@interface SCSnapSaver
-
-+(id) shared;
-
--(void) saveSnapImageToSnapAlbum:(id)image completionBlock:(id)block;
-
-@end
-
+%end
 
 
 %hook SCPreviewConfiguration
 
 
-	-(void) setFromePhoneGallery:(BOOL)ag1
+	-(void) setFromPhoneGallery:(BOOL)ag1
 	{
-		if(GetPrefBool(@"isEnabled") && GetPrefBool(@"snapSelect"))
+		if(GetPrefBool(@"snapSelect"))
 			return %orig(NO);
 
 		%orig;
@@ -90,15 +58,13 @@ BOOL isMegaSnapRunning = NO;
 
 	-(void) setAudioPresentInVideo:(BOOL)arg1
 	{
-		if(GetPrefBool(@"isEnabled") && GetPrefBool(@"snapSelect"))
+		if(GetPrefBool(@"snapSelect"))
 			return %orig(YES);
 
 		%orig;
 	}
 
-
 %end
-
 
 
 %hook AppDelegate
@@ -109,7 +75,7 @@ BOOL isMegaSnapRunning = NO;
 	{
 
 		// Enable/Disable Snapchat Extender
-		prefs = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.drp.snapmastersettings.plist"];
+		prefs = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.drp.snapmaster.plist"];
 
 		[viewControllers setObject:[NSNull null] forKey:@"FeedViewController"];
 		[viewControllers setObject:[NSNull null] forKey:@"SCChatViewController"];
@@ -129,8 +95,6 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-	
-
 %end
 
 
@@ -141,6 +105,8 @@ BOOL isMegaSnapRunning = NO;
 	// Disable Snap Timer
 	-(void) startTimer:(id)snap source:(int)source
 	{
+		currentSnap = snap;
+		currentSnapSource = source;
 
 		if(GetPrefBool(@"disableTimer"))
 		{
@@ -157,8 +123,7 @@ BOOL isMegaSnapRunning = NO;
 
 		}
 
-		%orig;		
-
+		%orig;
 	}
 
 
@@ -179,16 +144,8 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
-
 %end
 
-
-@interface MainViewController
-
--(void) presentLeftVCAnimated:(BOOL)animated;
-
-@end
 
 %hook MainViewController
 
@@ -226,7 +183,6 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
 %end
 
 
@@ -244,135 +200,128 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
-	// Mark snap as viewed after release.
-	-(void) touchesEndedForCellWithSnap:(id)snap
-	{
-
-		if(!GetPrefBool(@"tapClose"))
+	/*
+		// Mark snap as viewed after release.
+		-(void) touchesEndedForCellWithSnap:(id)snap
 		{
-			
-			%orig;
-		
-			@try
-				{
 
-					if(GetPrefBool(@"disableTimer"))
+			if(!GetPrefBool(@"tapClose"))
+			{
+				
+				%orig;
+			
+				@try
 					{
 
-						[[%c(Manager) shared] markSnapAsViewed:snap];
+						if(GetPrefBool(@"disableTimer"))
+						{
 
-						if(GetPrefBool(@"breakReplay")) [snap setCanBeReplayed:YES];
+							[[%c(Manager) shared] markSnapAsViewed:snap];
 
-						currentSnap = nil;
+							if(GetPrefBool(@"breakReplay")) [snap setCanBeReplayed:YES];
 
-					}					
+							currentSnap = nil;
 
-				}
+						}					
 
-				@catch(NSException *){}
+					}
 
-			}		
+					@catch(NSException *){}
 
-	}
+				}		
 
-
-
-	-(void) showSnap:(id)snap
-	{
-
-		snapShowing = YES;
-
-		if(GetPrefBool(@"disableTimer")) currentSnap = snap;
-
-		%orig;
-
-	}
+		}
+	*/
 
 
+		-(void) showSnap:(id)snap
+		{
+			snapShowing = YES;
+			currentSnap = snap;
+			%orig;
+		}
 
-	-(void) tapToSkip:(id)gesture 
-	{
 
-		BOOL saveSnapButtonPressed = NO;
 
-		if(GetPrefBool(@"saveSnap") && !GetPrefBool(@"autoSaveSnap") && snapShowing)
+		-(void) tapToSkip:(id)gesture 
 		{
 
-			CGPoint coords = [((UITapGestureRecognizer *)gesture) locationInView:((UITapGestureRecognizer *)gesture).view];
+			NSLog(@"FeedViewController -> tapToSkip:");
 
-			switch([[prefs valueForKey:@"saveButtonLocation"] intValue])
-			{
+			// BOOL saveSnapButtonPressed = NO;
 
-				case 0:
+			// if(GetPrefBool(@"saveSnap") && !GetPrefBool(@"autoSaveSnap") && snapShowing)
+			// {
 
-					if(coords.x <= 50 && coords.y <= 50) saveSnapButtonPressed = YES;
+			// 	CGPoint coords = [((UITapGestureRecognizer *)gesture) locationInView:((UITapGestureRecognizer *)gesture).view];
 
-					break;
+			// 	switch([[prefs valueForKey:@"saveButtonLocation"] intValue])
+			// 	{
 
-				case 1:
+			// 		case 0:
 
-					if(coords.x >= ([UIScreen mainScreen].bounds.size.width - 50) && coords.y <= 50) saveSnapButtonPressed = YES;
+			// 			if(coords.x <= 50 && coords.y <= 50) saveSnapButtonPressed = YES;
 
-					break;
+			// 			break;
 
-				case 2:
+			// 		case 1:
 
-					if(coords.x <= 50 && coords.y >= ([UIScreen mainScreen].bounds.size.height - 50)) saveSnapButtonPressed = YES;
+			// 			if(coords.x >= ([UIScreen mainScreen].bounds.size.width - 50) && coords.y <= 50) saveSnapButtonPressed = YES;
 
-					break;
+			// 			break;
 
-				default:
+			// 		case 2:
 
-					if(coords.x >= ([UIScreen mainScreen].bounds.size.width - 50) && coords.y >= ([UIScreen mainScreen].bounds.size.height - 50)) saveSnapButtonPressed = YES;
+			// 			if(coords.x <= 50 && coords.y >= ([UIScreen mainScreen].bounds.size.height - 50)) saveSnapButtonPressed = YES;
 
-					break;
+			// 			break;
 
-			}			
+			// 		default:
+
+			// 			if(coords.x >= ([UIScreen mainScreen].bounds.size.width - 50) && coords.y >= ([UIScreen mainScreen].bounds.size.height - 50)) saveSnapButtonPressed = YES;
+
+			// 			break;
+
+			// 		}					
+
+			// 	}
+
+			// 	if(!saveSnapButtonPressed)
+			// 	{
+
+			// 		if(GetPrefBool(@"disableTimer"))
+			// 		{	
+
+			// 		@try
+			// 		{
+			// 			allowTimer = YES;
+			// 			[[%c(Manager) shared] startTimer:currentSnap source:currentSnapSource];
+			// 			currentSnap = nil;
+			// 		}
+
+			// 		@catch(NSException *){}
+
+			// 	}	
+
+				%orig;
+
+			//}
 
 		}
 
-		if(!saveSnapButtonPressed)
+
+
+		// Discrete Screenshot
+		-(void) userDidTakeScreenshot
 		{
 
-			if(GetPrefBool(@"disableTimer"))
-			{	
-
-				@try
-				{
-
-					allowTimer = YES;
-					[[%c(Manager) shared] startTimer:currentSnap source:currentSnapSource];
-					currentSnap = nil;
-
-				}
-
-				@catch(NSException *){}
-
-			}	
+			if(GetPrefBool(@"disableSSNotif")) return;
 
 			%orig;
 
 		}
 
-	}
-
-
-
-	// Discrete Screenshot
-	-(void) userDidTakeScreenshot
-	{
-
-		if(GetPrefBool(@"disableSSNotif")) return;
-
-		%orig;
-
-	}
-
-
-
 %end
-
 
 
 %hook FeedTableViewCell
@@ -407,13 +356,10 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
 %end
 
 
-
 %hook SCChatViewController
-
 
 	-(id) init
 	{
@@ -427,46 +373,43 @@ BOOL isMegaSnapRunning = NO;
 	}
 
 
-	-(void) longPressEndedForCellWithSnap:(id)snap
-	{
-
-		if(!GetPrefBool(@"tapClose"))
+	/*
+		-(void) longPressEndedForCellWithSnap:(id)snap
 		{
 
-			%orig;
-
-			@try
+			if(!GetPrefBool(@"tapClose"))
 			{
 
-				if(GetPrefBool(@"disableTimer"))
+				%orig;
+
+				@try
 				{
 
-					[[%c(Manager) shared] markSnapAsViewed:snap];
-					currentSnap = nil;
+					if(GetPrefBool(@"disableTimer"))
+					{
 
-					if(GetPrefBool(@"breakReplay")) [snap setCanBeReplayed:YES];
+						[[%c(Manager) shared] markSnapAsViewed:snap];
+						currentSnap = nil;
 
-				}				
+						if(GetPrefBool(@"breakReplay")) [snap setCanBeReplayed:YES];
+
+					}				
+
+				}
+
+				@catch(NSException *){}
 
 			}
 
-			@catch(NSException *){}
-
 		}
-
-	}
-
+	*/
+	
 
 
 	-(void) showSnap:(id)snap
 	{
-
 		snapShowing = YES;
-
-		if(GetPrefBool(@"disableTimer")) currentSnap = snap;
-
 		%orig;
-
 	}
 
 
@@ -527,10 +470,7 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
-
 %end
-
 
 
 %hook SCStoriesViewController
@@ -591,7 +531,6 @@ BOOL isMegaSnapRunning = NO;
 %end
 
 
-
 %hook User
 
 
@@ -616,9 +555,7 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
 %end
-
 
 
 %hook SCCounterLabel
@@ -635,10 +572,7 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
-
 %end
-
 
 
 %hook Story
@@ -655,10 +589,7 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
-
 %end
-
 
 
 %hook Snap
@@ -675,10 +606,7 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
-
 %end
-
 
 
 %hook SCHeader
@@ -721,17 +649,7 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
-
 %end
-
-
-
-@interface SCCameraOverlayView
-
--(id) galleryButton;
-
-@end
 
 
 %hook SCCameraOverlayView
@@ -747,16 +665,8 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
 %end
 
-
-
-@interface SCGrowingButton
-
--(SEL) action;
-
-@end
 
 %hook SCGrowingButton
 
@@ -771,73 +681,6 @@ BOOL isMegaSnapRunning = NO;
 
 %end
 
-
-
-@interface PreviewViewController : UIViewController
-
--(id) captionManager;
-
--(void) loadView;
-
--(void) saveImage;
-
--(void) saveVideo;
-
--(void) savePressed;
-
--(void) saveSnap;
-
--(id) sendConfirmationVC;
-
--(void) sendPressed;
-
--(id) sendVC;
-
--(void) storyPressed;
-
--(id) selectRecipientsVC;
-
--(void) setAudioPresent:(BOOL)audioPresent;
-
--(void) setAudioEnabled:(BOOL)audioEnabled;
-
--(void) setCaptionManager:(id)captionManager;
-
--(void) setImage:(id)image;
-
--(void) setupImageFilterViewWithDrawingView;
-
--(void) setReplyUsername:(id)replyUsername;
-
--(void) setReplyParameters:(id)replyParameters;
-
--(void) setQuickSend:(BOOL)quickSend;
-
--(void) setVideoURL:(id)videoURL;
-
--(id) sourceImage;
-
--(id) swipeFilterView;
-
--(BOOL) quickSend;
-
--(id) videoURL;
-
--(void) xPressed;
-
-@end
-
-@interface SCImageSwipeFilterView
-
--(id) mediaSwipeView;
-
-@end
-
-@interface SCMediaFilterScrollView
-
--(id) subviewItems;
-
-@end
 
 %hook PreviewViewController
 
@@ -934,10 +777,8 @@ BOOL isMegaSnapRunning = NO;
 		}
 
 	}
-
  
 %end
-
 
 
 %hook SendViewController
@@ -987,32 +828,8 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
 %end
 
-
-
-@interface SCCaptionManager : NSObject
-
--(id) caption;
-
--(void) setCaption;
-
-@end
-
-@interface SCSendConfirmationViewController : UIViewController
-
--(void) sendPressed;
-
--(id)recipients;
-
--(void) setRecipients:(id)recipients;
-
--(void) megasnap;
-
--(void) saveSnap;
-
-@end
 
 %hook SCSendConfirmationViewController
 
@@ -1137,16 +954,8 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
-
 %end
 
-
-
-@interface SCMediaView : UIView
-
--(id) imageView;
-
-@end
 
 BOOL ignoreCall = NO;
 
@@ -1258,7 +1067,6 @@ BOOL ignoreCall = NO;
 
 	}
 
-
 %end
 
 
@@ -1320,16 +1128,8 @@ BOOL ignoreCall = NO;
 
 	}
 
-
 %end
 
-
-
-@interface SCPlayerView : SCMediaView
-
--(id) player;
-
-@end
 
 %hook AVPlayer
 
@@ -1526,16 +1326,8 @@ BOOL ignoreCall = NO;
 
 	}
 
-
 %end 
 
-
-
-@interface SCCaptionDefaultTextView
-
--(id) textView;
-
-@end
 
 %hook SCCaptionDefaultTextView
 
@@ -1569,16 +1361,8 @@ BOOL ignoreCall = NO;
 
 	}
 
-
 %end
 
-
-
-@interface SCCaptionBigTextPlusView
-
--(id) textView;
-
-@end
 
 %hook SCCaptionBigTextPlusView
 
@@ -1602,9 +1386,7 @@ BOOL ignoreCall = NO;
 
 	}
 
-
 %end
-
 
 
 %hook UIImagePickerController
@@ -1618,6 +1400,5 @@ BOOL ignoreCall = NO;
 		if(GetPrefBool(@"snapSelect")) [self setMediaTypes:[[NSArray alloc] initWithObjects: @"public.image", @"public.movie", nil]];	
 
 	}
-
 
 %end

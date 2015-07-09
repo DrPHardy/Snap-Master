@@ -34,11 +34,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>isEnabled</string>
 			<key>label</key>
 			<string>Enable</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -52,11 +54,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>disableTimerUI</string>
 			<key>label</key>
 			<string>Hide Snap Timer</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -64,11 +68,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>showSublabels</string>
 			<key>label</key>
 			<string>Show Sublabels</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -76,11 +82,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>saveSnap</string>
 			<key>label</key>
 			<string>Save Snap Button</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -88,17 +96,19 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>snapButtonInverted</string>
 			<key>label</key>
 			<string>Invert Button</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSLinkListCell</string>
 			<key>defaults</key>			
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>default</key>
 			<integer>0</integer>
 			<key>detail</key>
@@ -121,6 +131,8 @@
 			<string>saveButtonLocation</string>
 			<key>label</key>
 			<string>Button Location</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -134,11 +146,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>checkAll</string>
 			<key>label</key>
 			<string>Check All Recipients</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>		
 		<dict>
 			<key>cell</key>
@@ -146,11 +160,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>disableTimer</string>
 			<key>label</key>
 			<string>Disable Snap Timer</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -158,11 +174,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>disableRPNotif</string>
 			<key>label</key>
 			<string>Discrete Replay</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -170,11 +188,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>disableSSNotif</string>
 			<key>label</key>
 			<string>Discrete Screenshot</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -182,11 +202,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>manualAdvance</string>
 			<key>label</key>
 			<string>Manual Story Advance</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>		
 		<dict>
 			<key>cell</key>
@@ -194,11 +216,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>breakReplay</string>
 			<key>label</key>
 			<string>No Replay Limit</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -206,11 +230,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>openFeed</string>
 			<key>label</key>
 			<string>Open To Feed</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -218,11 +244,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>tapClose</string>
 			<key>label</key>
 			<string>Tap Close Snap</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -230,11 +258,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>saveAllSent</string>
 			<key>label</key>
 			<string>Save All Sent</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -242,11 +272,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>autoSaveSnap</string>
 			<key>label</key>
 			<string>Save All Snaps</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -254,11 +286,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>autoSaveStories</string>
 			<key>label</key>
 			<string>Save All Stories</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -266,11 +300,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>snapSelect</string>
 			<key>label</key>
 			<string>Snap From Photo Library</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -278,25 +314,13 @@
 			<key>default</key>
 			<false/>
 			<key>defaults</key>
-			<string>com.drp.snapmastersettings</string>
+			<string>com.drp.snapmaster</string>
 			<key>key</key>
 			<string>moreText</string>
 			<key>label</key>
 			<string>Snap More Text</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>footerText</key>
-			<string>Restart Snapchat in order for changes to take place.</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSButtonCell</string>
-			<key>label</key>
-			<string>Restart Snapchat</string>
-			<key>action</key>
-			<string>killSnapchat</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
 	</array>	
 </dict>

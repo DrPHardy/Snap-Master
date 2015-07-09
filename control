@@ -1,9 +1,9 @@
 Package: com.drp.snapmaster
 Name: Snap Master
-Depends: mobilesubstrate
+Depends: mobilesubstrate, preferenceloader
 Version: 1.5.3
 Architecture: iphoneos-arm
 Description: Make Snapchat go beyond the norm.
-Maintainer: AcidTweaks <acidtweaks@gmail.com>
-Author: AcidTweaks <acidtweaks@gmail.com>
+Maintainer: DrP <drphardy4@gmail.com>
+Author: DrP <drphardy4@gmail.com>
 Section: Tweaks
