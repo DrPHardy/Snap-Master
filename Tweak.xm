@@ -594,16 +594,19 @@ BOOL isMegaSnapRunning = NO;
 
 %hook Snap
 
-
-
 	// Discrete Replay
-	-(void) setReplayed:(BOOL)replayed
-	{
-
-		if(GetPrefBool(@"disableRPNotif")) return %orig(NO);
-
-		%orig;
-
+	-(void)didReplay {
+		if(GetPrefBool(@"disableRPNotif"))
+		else %orig;
+	}
+	//Free Replays?
+	-(bool)hasFreeReplay {
+		if(GetPrefBool(@"breakReplay")) return true;
+		return %orig;
+	}
+	-(bool)canBeReplayed {
+		if(GetPrefBool(@"breakReplay")) return true;
+		return %orig;
 	}
 
 %end
@@ -651,7 +654,7 @@ BOOL isMegaSnapRunning = NO;
 
 %end
 
-
+// Needs Updating
 %hook SCCameraOverlayView
 
 

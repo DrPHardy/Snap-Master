@@ -6,7 +6,10 @@
 
 @interface Snap
 -(void) setCanBeReplayed:(BOOL)canBeReplayed;
--(void) setReplayed:(BOOL)wasReplayed;
+// -(void) setReplayed:(BOOL)wasReplayed;
+-(void)didReplay;
+-(bool)hasFreeReplay;
+-(bool)canBeReplayed;
 -(void) markAsViewed;
 @end
 
