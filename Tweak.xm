@@ -144,6 +144,15 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
+
+	-(void)tick:(id)tick
+	{
+		if(GetPrefBool(@“noExpire”)) return;
+	
+		%orig;
+	}
+		
+
 %end
 
 
