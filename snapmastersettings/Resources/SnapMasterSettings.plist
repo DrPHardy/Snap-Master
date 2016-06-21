@@ -322,6 +322,20 @@
 			<key>PostNotification</key>
 			<string>com.drp.snapmaster/preferences.changed</string>
 		</dict>
+               <dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.drp.snapmaster</string>
+			<key>key</key>
+			<string>noExpire</string>
+			<key>label</key>
+			<string>Disable Expiration of Snaps</string>
+			<key>PostNotification</key>
+			<string>com.drp.snapmaster/preferences.changed</string>
+               </dict>
 	</array>	
 </dict>
 </plist>

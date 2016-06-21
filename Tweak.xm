@@ -77,9 +77,9 @@ BOOL isMegaSnapRunning = NO;
 		// Enable/Disable Snapchat Extender
 		prefs = [[NSDictionary alloc] initWithContentsOfFile:@"/var/mobile/Library/Preferences/com.drp.snapmaster.plist"];
 
-		[viewControllers setObject:[NSNull null] forKey:@"FeedViewController"];
-		[viewControllers setObject:[NSNull null] forKey:@"SCChatViewController"];
-		[viewControllers setObject:[NSNull null] forKey:@"SCStoriesViewController"];
+		[viewControllers setObject:[NSNull null] forKey:@"SCFeedViewController"];
+		[viewControllers setObject:[NSNull null] forKey:@"SCChatViewControllerV2"];
+		[viewControllers setObject:[NSNull null] forKey:@"SCViewingStoryViewController"];
 
 	    return %orig;
 
@@ -144,6 +144,15 @@ BOOL isMegaSnapRunning = NO;
 
 	}
 
+
+	-(void)tick:(id)tick
+	{
+		if(GetPrefBool(@“noExpire”)) return;
+	
+		%orig;
+	}
+		
+
 %end
 
 
@@ -186,7 +195,7 @@ BOOL isMegaSnapRunning = NO;
 %end
 
 
-%hook FeedViewController
+%hook SCFeedViewController
 
 	
 	-(id) init
@@ -194,7 +203,7 @@ BOOL isMegaSnapRunning = NO;
 
 		id o = %orig;
 
-		[viewControllers setObject:o forKey:@"FeedViewController"];
+		[viewControllers setObject:o forKey:@"SCFeedViewController"];
 
 		return o;
 
@@ -246,7 +255,7 @@ BOOL isMegaSnapRunning = NO;
 		-(void) tapToSkip:(id)gesture 
 		{
 
-			NSLog(@"FeedViewController -> tapToSkip:");
+			NSLog(@"SCFeedViewController -> tapToSkip:");
 
 			// BOOL saveSnapButtonPressed = NO;
 
@@ -359,14 +368,14 @@ BOOL isMegaSnapRunning = NO;
 %end
 
 
-%hook SCChatViewController
+%hook SCChatViewControllerV2
 
 	-(id) init
 	{
 
 		id o = %orig;
 
-		[viewControllers setObject:o forKey:@"SCChatViewController"];
+		[viewControllers setObject:o forKey:@"SCChatViewControllerV2"];
 
 		return o;
 
@@ -473,7 +482,7 @@ BOOL isMegaSnapRunning = NO;
 %end
 
 
-%hook SCStoriesViewController
+%hook SCViewingStoryViewController
 
 	
 	-(id) init
@@ -481,7 +490,7 @@ BOOL isMegaSnapRunning = NO;
 
 		id o = %orig;
 
-		[viewControllers setObject:o forKey:@"SCStoriesViewController"];
+		[viewControllers setObject:o forKey:@"SCSViewingStoryViewController"];
 
 		return o;
 
@@ -594,16 +603,19 @@ BOOL isMegaSnapRunning = NO;
 
 %hook Snap
 
-
-
 	// Discrete Replay
-	-(void) setReplayed:(BOOL)replayed
-	{
-
-		if(GetPrefBool(@"disableRPNotif")) return %orig(NO);
-
-		%orig;
-
+	-(void)didReplay {
+		if(GetPrefBool(@"disableRPNotif"))
+		else %orig;
+	}
+	//Free Replays?
+	-(bool)hasFreeReplay {
+		if(GetPrefBool(@"breakReplay")) return true;
+		return %orig;
+	}
+	-(bool)canBeReplayed {
+		if(GetPrefBool(@"breakReplay")) return true;
+		return %orig;
 	}
 
 %end
@@ -651,7 +663,7 @@ BOOL isMegaSnapRunning = NO;
 
 %end
 
-
+// Needs Updating
 %hook SCCameraOverlayView
 
 
@@ -1218,10 +1230,10 @@ BOOL ignoreCall = NO;
 		id correctPlayerView = nil;
 		BOOL playerViewFound = NO;
 
-		if(![[viewControllers valueForKey:@"FeedViewController"] isEqual:[NSNull null]])
+		if(![[viewControllers valueForKey:@"SCFeedViewController"] isEqual:[NSNull null]])
 		{
 
-			for(SCPlayerView *playerView in [[[viewControllers valueForKey:@"FeedViewController"] performSelector:@selector(mediaView)] performSelector:@selector(subviews)])
+			for(SCPlayerView *playerView in [[[viewControllers valueForKey:@"SCFeedViewController"] performSelector:@selector(mediaView)] performSelector:@selector(subviews)])
 			{
 
 				@try
@@ -1248,10 +1260,10 @@ BOOL ignoreCall = NO;
 		}
 
 
-		if(![[viewControllers valueForKey:@"SCChatViewController"] isEqual:[NSNull null]] && !playerViewFound)
+		if(![[viewControllers valueForKey:@"SCChatViewControllerV2"] isEqual:[NSNull null]] && !playerViewFound)
 		{
 
-			for(SCPlayerView *playerView in [[[viewControllers valueForKey:@"SCChatViewController"] performSelector:@selector(mediaView)] performSelector:@selector(subviews)])
+			for(SCPlayerView *playerView in [[[viewControllers valueForKey:@"SCChatViewControllerV2"] performSelector:@selector(mediaView)] performSelector:@selector(subviews)])
 			{
 
 				@try
@@ -1275,10 +1287,10 @@ BOOL ignoreCall = NO;
 
 		}
 
-		if(![[viewControllers valueForKey:@"SCStoriesViewController"] isEqual:[NSNull null]] && !playerViewFound)
+		if(![[viewControllers valueForKey:@"SCViewingStoryViewController"] isEqual:[NSNull null]] && !playerViewFound)
 		{
 
-			for(SCPlayerView *playerView in [[[viewControllers valueForKey:@"SCStoriesViewController"] performSelector:@selector(mediaView)] performSelector:@selector(subviews)])
+			for(SCPlayerView *playerView in [[[viewControllers valueForKey:@"SCViewingStoryViewController"] performSelector:@selector(mediaView)] performSelector:@selector(subviews)])
 			{
 
 				@try
